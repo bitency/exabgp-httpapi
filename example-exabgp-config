@@ -1,0 +1,30 @@
+process http-api {
+    run /usr/bin/python /etc/exabgp_api.py;
+    encoder text;
+}
+
+
+template {
+	neighbor borderrouters {
+		local-as 65533;
+		peer-as 65533;
+		hold-time 180;
+		group-updates false;
+
+		capability {
+			graceful-restart 1200;
+		}
+
+		  api {
+        		processes [ http-api ];
+    		}	
+
+		}
+}
+
+neighbor 127.0.0.1 {
+	inherit borderrouters;
+	description "BORDER-1 NIKHEF";
+	router-id 127.0.0.0;
+	local-address 127.0.0.1;
+}
